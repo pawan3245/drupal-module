@@ -1,0 +1,76 @@
+<?php
+function post_blog_getaway_menu()
+{		  
+	$items = array();
+	$items['post/blog'] = array(
+	'title' => 'Post blog on getaway Programmatically',
+	'description' => 'Post blog on getaway Programmatically',
+	'page callback' => 'post_blog_getaway_content',
+	'access arguments' => array('access content'),
+	 'access callback' => TRUE,
+	);
+   return $items;
+
+}
+
+
+function post_blog_getaway_content()
+{	
+	$nodeId		= arg(2);
+	if(!empty($nodeId)){
+		$node 	= node_load($nodeId);
+		$title	= $node->title;
+		$body	= isset($node->body[$node->language][0]['value'])?$node->body[$node->language][0]['value']:$node->body['und'][0]['value'];
+		$fid	= $node->field_blog_image['und'][0]['fid'];
+		$uid	= $node->uid;
+		$host	= $node->field_blog_host_name['und'][0]['value'];
+		$nid	= $node->nid;
+		
+		$body	= str_replace('/sites/default/files','https://'.$host.'/sites/default/files',$body);
+		
+		$userArray	= user_load($uid);
+		$fieldFirstNameInfo = field_get_items('user', $userArray, 'field_profile_first_name');
+		if ($fieldFirstNameInfo) {
+			$firstName = check_plain($fieldFirstNameInfo[0]['value']);
+			
+		}
+		else {
+			$firstName  	= '';
+		}
+		
+		$fieldLastNameInfo = field_get_items('user', $userArray, 'field_profile_last_name');
+		if ($fieldLastNameInfo) {
+			$lastName = check_plain($fieldLastNameInfo[0]['value']);
+			
+		}
+		else {
+			$lastName  	= '';
+		}
+		
+		$ownerName	= $firstName.' '.$lastName;
+		
+		$file 	= file_load($fid);
+		$uri 	= $file->uri;
+
+		$url 	= file_create_url($uri);
+		
+		global $base_url; 
+		
+		$data = 'title='.$title.'&body='.urlencode($body).'&image='.urlencode($url).'&uid='.$uid.'&host='.$host.'&ownername='.$ownerName.'&blogid='.$nid;
+		$options = array(
+			'method' => 'POST',
+			'data' => $data,
+			'timeout' => 15,
+			'headers' => array(
+			'Content-Type' => 'application/x-www-form-urlencoded',
+			'Authorization' => 'Bearer 1234545332',
+			),
+		);
+		
+		$url	= 'https://getaways.sacredrides.com/dynamic/blog';
+		$result = drupal_http_request($url, $options);	
+		drupal_set_message(t('Blog Has been posted on getaway successfuly.'));
+		drupal_goto('all_blogs');	
+		
+	}
+}
