@@ -1,0 +1,383 @@
+<?php
+/**
+* Implements hook_init().
+*/
+function micro_sites_location_init(){
+		
+	
+}
+
+
+function micro_sites_location_menu() {
+  $items = array();
+  $items['microsites_ride/filter'] = array(
+    'title' => '',
+    'description' => 'Provides filter option to search ride.',
+    'access callback' => true,
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('rides_filter_option_form'),
+  );
+ 
+  return $items;
+}
+
+function rides_filter_option_form($form, &$form_state) {
+  $skilloption		= array('Beginner'=>'Beginner','Intermediate'=>'Intermediate','Advanced'=>'Advanced','Pro'=>'Pro');
+  $fitnessoption	= array('Couch Potato'=>'Couch Potato','Kinda Active'=>'Kinda Active','Pretty Active'=>'Pretty Active','Very Active'=>'Very Active','Olympian'=>'Olympian');
+  
+  
+	/*GET DOMAIN PUBLISH RIDEs*/
+	$location	=	"Test";
+	$url = 	"http://getaways-site-control.sacredrides.com/microsites/api/".$location."/domain_publish_rides";
+	$headers = array('Content-Type' => 'application/x-www-form-urlencoded');
+
+	$data 			= array ();
+	$full_url 		= url($url, array('query' => $data));	
+	$request  		= drupal_http_request($full_url);
+	$PublishRides 	= drupal_json_decode($request->data);
+	//echo "<pre>";print_r($PublishRides);die;
+	/*END GET DOMAIN PUBLISH RIDEs*/
+  
+  $form = array();
+  if (isset($form_state['values'])){
+	  //echo "pawan";
+		$domainArray	= $form_state['values']['domain'];
+	  //change locations on map according to search filter.
+		$locations = db_select('microsite_locations', 'microsite_locations')
+			->fields('microsite_locations')
+			->execute();
+		$locationsArray	 = array();
+		while($record = $locations->fetchAssoc()) {
+			$locationsArray[$record['domain']] = $record;
+		}
+		$itemArrayNew	= array();
+		if(!empty($locationsArray)){ 
+			$i	= 0;
+			foreach($locationsArray as $key=>$value){
+				$title	= $value['location_name'].', '.$value['country'];
+				$itemArrayNew[$i]['location']	=  '<h3 class="hook">'.htmlentities($title).'</h3><a id="map_'.$value['domain'].'" href="javascript:void(0);" onclick="showride(\''.$value['domain'].'\');" class="maplocation">CLICK/TAP TO SEE RIDES BELOW</a>' ;
+				$itemArrayNew[$i]['domain']		= $value['domain'];
+				$itemArrayNew[$i]['lat']		= $value['lat'];
+				$itemArrayNew[$i]['long']		= $value['long'];
+				
+				if(isset($PublishRides[$value['domain']]) && !empty($PublishRides[$value['domain']])){
+					$itemArrayNew[$i]['is_publish']	= 1;
+				}else{
+					$itemArrayNew[$i]['is_publish']	= 0;
+				}
+				
+				$i++;
+			}
+		}
+		drupal_add_js(array('micro_sites_locations_new' => json_encode($itemArrayNew)), 'setting');
+	  }
+  
+  $form['#method'] = 'get';
+  $form['#action'] = url('rides');
+  $form['#suffix'] = '<div id="microsites_rides"></div>';
+
+  $form['from'] = array(
+     '#title' => t('DATES:'),
+      '#attributes' => array('placeholder' => t('From')),
+	  '#type' => 'date_popup',
+	  '#date_format' => 'Y-m-d',
+      '#size'=>12
+    
+    );
+    $form['to'] = array(
+      '#title' => t(''),
+      '#attributes' => array('placeholder' => t('To')),
+      '#type' => 'date_popup',
+      '#date_format' => 'Y-m-d',
+      '#size'=>12
+    
+    );
+    $form['skill_level']     = array(
+		'#title' => t(''),       
+		'#type' => 'select', 
+		'#empty_option'=>t('Skill'),
+		'#default_value'=>'',
+		//'#required'=>true,       
+		'#options' =>$skilloption,
+		'#attributes' => array('class' => array('container-inline')),        
+		'#weight' => $weight++,        
+	);
+	
+	$form['fitness_level']     = array(
+		'#title' => t(''),       
+		'#type' => 'select', 
+		'#empty_option'=>t('Fitness'),
+		'#attributes' => array('class' => array('container-inline')),
+		'#default_value'=>'',
+		//'#required'=>true,       
+		'#options' =>$fitnessoption,        
+		'#weight' => $weight++,        
+	);
+	
+	$form['location']     = array(
+		'#type' => 'hidden', 
+		'#default_value'=>'', 
+		'#attributes' => array('id' => 'location_domain'),      
+		'#weight' => $weight++,        
+	);
+    // submit
+    $form['submit'] = array(
+      '#type' => 'submit',
+      '#value' => t('APPLY FILTER'),
+      '#weight' => $weight++,   
+      '#ajax' => array(
+        'callback' => 'rides_filter_option_form_submit',
+        'wrapper' => 'multidays_rides',
+        'method' => 'replace',
+        'effect' => 'fade'
+      ),
+      '#submit' => array('rides_filter_option_form_submit'),
+    );
+    return $form;
+ }
+function rides_filter_option_form_submit($form, &$form_state) {
+	$location		= 'test';
+	$url 			= "http://getaways-site-control.sacredrides.com/microsites/api/".$location."/rides";
+	$headers = array('Content-Type' => 'application/x-www-form-urlencoded');
+	
+	$data = array (
+		'location'=>'test',
+		'rides' => 'rides',
+		'skill' =>$form_state['values']['skill_level'],
+		'fitness' =>$form_state['values']['fitness_level'],
+		'to' => $form_state['values']['to'],
+		'from'=>$form_state['values']['from'],
+		'domain'=>$form_state['values']['location']
+		);
+		
+	$full_url = url($url, array('query' => $data));	
+	$request  = drupal_http_request($full_url);
+	$json_response 	= drupal_json_decode($request->data);		
+	
+$html	= '<div id="multidays_rides">';
+$form_state['values']['domain']	= array();
+if(!empty($json_response['rides'])){
+foreach($json_response['rides'] as $domain=>$microsites)
+{
+	if($domain=='Valais1, Switzerland' || $domain=='Testing, Ontario' || $domain=='Demo, India' || empty($domain)){
+		continue;
+	}
+
+
+	if(!empty($microsites)){
+		$form_state['values']['domain'][]	= $json_response['domain'][$domain];
+		$html.='<div id="head_'.$json_response['domain'][$domain].'" class=
+		"mrides"><h3 style="color: #ef5832" ><span>'.$domain."</span></h3>";
+
+		foreach($microsites as $RideIdKey=>$RidesData)
+		{
+
+
+			/*RIDE TYPE COLOR ICON*/
+
+			if($RidesData['ride_domain']=='valais1.sacredrides.com' || $RidesData['ride_domain']=='getawaystesting.sacredrides.com'){
+					continue;
+				}
+				switch($RidesData['ride_type'])
+				{
+					case "single_track":
+					$RideTypeText		=	"SINGLETRACK";
+					$BackGroundColorIcon=	"#196A9F";	
+					break;
+					
+					case "skill_kamps":
+					$RideTypeText		=	"WOMEN'S";
+					$BackGroundColorIcon=	"#823DA8";	
+					break;
+					
+					case "multisport_rides":
+					$RideTypeText		=	"EXPLORER";
+					$BackGroundColorIcon=	"#687718";	
+					break;
+					
+					case "bring_your_partner":
+					$RideTypeText		=	"BRING-YOUR-PARTNER";
+					$BackGroundColorIcon=	"#EF5832";	
+					break;
+					
+					default:
+					$RideTypeText		=	"";
+					$BackGroundColorIcon=	"";	
+				}
+				
+				$rideUrl	= 'http://'.$RidesData['ride_domain'].'/';
+
+
+			$html.='<div class="views-row">
+			<div class="panels-flexible-ride_listing clearfix">
+			  <div class=" panels-flexible-column-ride_listing-5 "> 
+			  <a href="'.$rideUrl.'node/'.$RideIdKey.'" target="_blank"><img width="300" height="200" alt="" src="'.$RidesData['ride_image'].'"></a> </div>';
+			  
+			  $html.='<div class=" panels-flexible-column-ride_listing-main ">
+				<h3 class="ridelist_title">  <a href="'.$rideUrl.'node/'.$RideIdKey.'" target="_blank">'.$RidesData['title'];
+				
+				if($RideTypeText!=""){
+					$html.='<span id="is_new" style="background-color:'.$BackGroundColorIcon.'border-radius: 4px; color: #FFF; font-size: 10px; padding: 3px 10px;top:-4px;">'.$RideTypeText.'</span>'; 
+				}
+				 $html.='</a></h3>';
+				 
+				 $html.='<div class="ride_subtitledetails"><span class="subtitledetailitem activeMonths">'.$RidesData['ride_active_month'].'</span><span class="subtitledetailitem duration">'.$RidesData['ride_duration'].'Days</span>';
+					
+				$SkillColorBoxId = 'skill_' . $RideIdKey;
+				
+				$ptn = "/(\d{1,}\/\d)/";
+				$str = $RidesData['ride_skilllevel_rating'];
+				preg_match($ptn, $str, $matches);
+					
+				$html.='<span class="subtitledetailitem skill"><a class="colorbox-inline" href="/?width=640px&height=400px&inline=true#'.$SkillColorBoxId.'">Skill:'.$matches[1]; 
+							
+				
+				$html.='</a></span><div class="hide-me-wrapper"><div class="hide-me" id="'.$SkillColorBoxId.'">'.$RidesData['ride_skilllevel_desc'].'</div></div>';
+				 
+				 
+				$FitnessColorBoxId = 'fitness_' . $RideIdKey;
+				$ptn = "/(\d{1,}\/\d)/";
+				$str = $RidesData['ride_fitnesslevel_rating'];
+				preg_match($ptn, $str, $matches);
+				
+				$html.='<span class="subtitledetailitem fitness"><a class="colorbox-inline" href="/?width=640px&height=400px&inline=true#'.$FitnessColorBoxId.'">Fitness:'.$matches[1].'</a></span><div class="hide-me-wrapper"><div class="hide-me" id="'.$FitnessColorBoxId.'">'.$RidesData['ride_fitnesslevel_desc'].'</div></div>';
+				
+				 $CultureColorBoxId = 'CultureLevel_' . $RideIdKey;
+				  
+				  
+				 $html.='<span class="subtitledetailitem subtitleprice">$'.number_format($RidesData['ride_base_price']/100)." ".$RidesData['ride_currency'].'</span></div>';
+				$html.='<div class="ridelist_teaser">'.$RidesData['ride_teaser'].'</div>';
+				$html.='<span class="bottom_info_icon_mobile">  <a href="'.$rideUrl.'node/'.$RideIdKey.'" target="_blank">Click for more info </a></span></div></div></div>';
+
+				}
+				$html.='</div>';
+		}else{
+			$html.='<div class="view-empty">
+				  <h3>No ride found!</h3>
+				</div>';
+
+		}
+
+	}
+}else{
+	if(!empty($form_state['values']['location']) && empty($form_state['values']['skill_level']) &&  empty($form_state['values']['fitness_level']) && empty($form_state['values']['to']) && empty($form_state['values']['from'])){
+		$email = $json_response['domain']['email'];
+		$html.='<div class="view-empty">
+					<h3 style="text-align:center">NO RIDES (YET)</h3>
+				  <p><b>This destination has not posted their Rides yet - please check back soon or email \''.$email.'\' if you want to enquire about Rides in this location.</b></p>
+				</div>';
+		
+	}else{
+		$html.='<div class="view-empty">
+				  <p><b>You\'re very demanding, we\'re afraid - your search came up with nothing. Nada. Zilch.  
+					That\'s a little embarrassing and we\'re working on it, but in the meantime why not try revising your criteria a little bit?</b></p>
+				</div>';
+	}
+	
+}
+$html.='</div>';
+
+	$form_state['rebuild'] = TRUE;
+  // Replace Content
+	$content = $html;
+	$commands[] = ajax_command_invoke(NULL, "loadmap");
+	$commands[] = ajax_command_invoke(NULL, "scrollpage");
+
+	$commands[] = ajax_command_replace(NULL, $content);
+	
+	return array('#type' => 'ajax',  '#commands' => $commands);
+}
+
+
+/**
+* Implements hook_block_info().
+*/
+function micro_sites_location_block_info() {
+  $blocks = array();
+
+  $blocks['micro_sites_location_block'] = array(
+    'info' => t('Micro sites locations'),
+  );
+
+  return $blocks;
+}
+
+/**
+* Implements hook_block_view().
+*/
+function micro_sites_location_block_view($delta = '') {
+  $block = array();
+
+  switch ($delta) {
+    case 'micro_sites_location_block':
+      $block['subject'] = '';
+      $block['content'] = _micro_sites_location_content();
+      break;
+  }
+
+  return $block;
+}
+/* block content for m ride */
+function _micro_sites_location_content($domainArray=array()) {
+	
+	/*GET DOMAIN PUBLISH RIDEs*/
+	$location	=	"Test";
+	$url = 	"http://getaways-site-control.sacredrides.com/microsites/api/".$location."/domain_publish_rides";
+	$headers = array('Content-Type' => 'application/x-www-form-urlencoded');
+	
+	$data 			= array ();
+	$full_url 		= url($url, array('query' => $data));	
+	$request  		= drupal_http_request($full_url);
+	$PublishRides 	= drupal_json_decode($request->data);
+	//echo "<pre>";print_r($PublishRides);die;
+	/*END GET DOMAIN PUBLISH RIDEs*/
+	
+	$locations = db_select('microsite_locations', 'microsite_locations')
+	->fields('microsite_locations')
+	->execute();
+	
+	$locationsArray	 = array();
+	while($record = $locations->fetchAssoc()) {
+		$locationsArray[$record['domain']] = $record;
+    }
+	$itemArray	= array();
+	if(!empty($locationsArray)){ 
+		$i	= 0;
+		foreach($locationsArray as $key=>$value){
+			$title	= $value['location_name'].', '.$value['country'];
+			$itemArray[$i]['location']	=  '<h3 class="hook">'.htmlentities($title).'</h3><a id="map_'.$value['domain'].'" href="javascript:void(0);" onclick="showride(\''.$value['domain'].'\');" class="maplocation">CLICK/TAP TO SEE RIDES BELOW</a>' ;
+			$itemArray[$i]['domain']	= $value['domain'];
+			$itemArray[$i]['lat']		= $value['lat'];
+			$itemArray[$i]['long']		= $value['long'];
+			if(isset($PublishRides[$value['domain']]) && !empty($PublishRides[$value['domain']])){
+				$itemArray[$i]['is_publish']	= 1;
+			}else{
+				$itemArray[$i]['is_publish']	= 0;
+			}
+			$i++;
+		}
+	}
+	//echo "<pre>";print_r($itemArray);die;
+	drupal_add_js("https://maps.googleapis.com/maps/api/js?key=AIzaSyAlYNtrXpw5pe4PZunUPeteYu0nSzGF8eE&libraries=places");
+	
+	drupal_add_js(array('micro_sites_locations' => json_encode($itemArray)), 'setting');
+	
+	drupal_add_js(drupal_get_path('module', 'micro_sites_location') . '/js/mapajax.js', 'file');
+	
+	return theme('_micro_sites_location_content', array('items' => $locationsArray));
+}
+
+
+//here you are registering your default tpl for the above block 
+function micro_sites_location_theme() {   
+  $module_path = drupal_get_path('module', 'micro_sites_location');
+  $base = array(
+    'path' => "$module_path/theme",   
+  );
+  return array(
+    '_micro_sites_location_content' => $base + array(
+      'template' => 'micro_sites_location',
+      'variables' => array('items' => NULL,),
+    ),   
+  ); 
+}

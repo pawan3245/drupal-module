@@ -1,0 +1,8 @@
+core = "7.x"
+package	= "Micro sites"
+description = "Block to show Micro sites location."
+name = "Creating new block To show Micro sites location on Getaway sotes. "
+
+scripts[]     	   = js/mapminplace.js
+scripts[]     	   = js/searchajax.js
+
