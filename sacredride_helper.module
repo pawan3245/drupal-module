@@ -25,12 +25,12 @@ function init()
  * @param  string $form_id    	The form ID
  * @return void
  */
-function sacredride_helper_form_alter(&$form, &$form_state, $form_id)
+function hook_helper_form_alter(&$form, &$form_state, $form_id)
 {
 	global $user;
 //Add js file to hide the admin menu and vertical tabs on node add/edit form.
 	if(!in_array('admin',$user->roles) && !in_array('Developer',$user->roles)){
-	  	//drupal_add_js(drupal_get_path('theme', 'parallax') . '/js/sacredride_admin_menu.js', 'file');
+	  	//drupal_add_js(drupal_get_path('theme', 'parallax') . '/js/hook_admin_menu.js', 'file');
 	}
 	//echo $form_id;
 	// Keep this clean, put all general form alters here
@@ -38,82 +38,82 @@ function sacredride_helper_form_alter(&$form, &$form_state, $form_id)
 	{
 		//Registration form hook
 		case 'user_profile_form':
-		sacredride_helper_alter_user_profile_form($form, $form_state);
+		hook_helper_alter_user_profile_form($form, $form_state);
 		break;
 		
 		case 'user_register_form' :	
-		sacredride_helper_alter_user_register_form ($form, $form_state);
+		hook_helper_alter_user_register_form ($form, $form_state);
 		
 		break;
 		
 		case 'ride_node_form' : 
 		
-		sacredride_helper_alter_ride_node_form ($form, $form_state);
+		hook_helper_alter_ride_node_form ($form, $form_state);
 		
 		break;
 		
 		case 'site_set_up_page_node_form' : 
 		
-		sacredride_helper_alter_site_set_up_form ($form, $form_state);
+		hook_helper_alter_site_set_up_form ($form, $form_state);
 		
 		break;
 		
 		case 'blog_node_form' : 
 		
-		sacredride_helper_alter_blog_form ($form, $form_state);
+		hook_helper_alter_blog_form ($form, $form_state);
 		
 		break;
 		
 		case 'singletrack_front_page_video_node_form' :
 		
-		sacredride_helper_front_page_form ($form, $form_state);
+		hook_helper_front_page_form ($form, $form_state);
 		
 		break;
 		
 		case 'ride_listing_header_node_form' :
 		
-		sacredride_helper_ridelisting_page_form ($form, $form_state);
+		hook_helper_ridelisting_page_form ($form, $form_state);
 		
 		break;
 		
 		case 'global_header_footer_section_node_form' :
 		
-		sacredride_helper_headerfooter_page_form ($form, $form_state);
+		hook_helper_headerfooter_page_form ($form, $form_state);
 		
 		break;
 		
 		case 'proof_permit_node_form' :
 		
-		sacredride_helper_proof_permit_node_form ($form, $form_state);
+		hook_helper_proof_permit_node_form ($form, $form_state);
 		
 		break;
 		
 		case 'affiliates_insurance_document_node_form' :
 		
-		sacredride_helper_insurance_node_form ($form, $form_state);
+		hook_helper_insurance_node_form ($form, $form_state);
 		
 		break;
 		
 		case 'guide_first_add_certificate_node_form' :
 		
-		sacredride_helper_first_add_certificate_node_form ($form, $form_state);
+		hook_helper_first_add_certificate_node_form ($form, $form_state);
 		
 		break;
 		
 		case 'webform_client_form_2884':
-		$form['#submit'][] = 'sacredride_helper_endridesurvey_form_submit';
+		$form['#submit'][] = 'hook_helper_endridesurvey_form_submit';
 		break;
 		
 		case 'webform_client_form_2861':
-		$form['#validate'][] = 'sacredride_helper_contact_spaming_validate';
+		$form['#validate'][] = 'hook_helper_contact_spaming_validate';
 		break;
 				
 	}	
 }
 
-// function sacredride_helper_menu_link_alter(&$link) {
+// function hook_helper_menu_link_alter(&$link) {
 // 	$host				= trim($_SERVER['HTTP_HOST']);
-// if($host=="valais1.sacredrides.com"){
+// if($host=="valais1.hooks.com"){
 // 	echo "<pre>"; print_r($link); die;
 // 	if ($link['link_title'] == 'Booking System') {
 //     $link['options']['alter'] = TRUE;
@@ -129,7 +129,7 @@ function sacredride_helper_form_alter(&$form, &$form_state, $form_id)
  * 
  * 
  **/
-function sacredride_helper_form_views_exposed_form_alter (&$form, &$form_state){
+function hook_helper_form_views_exposed_form_alter (&$form, &$form_state){
 	
 	switch ($form['#id']) {
 		case 'views-exposed-form-owner-activity-block':
@@ -220,28 +220,28 @@ function sacredride_helper_form_views_exposed_form_alter (&$form, &$form_state){
  * @param  array $form_state Form state object
  * @return void
  */
-function sacredride_helper_alter_user_profile_form(&$form, &$form_state)
+function hook_helper_alter_user_profile_form(&$form, &$form_state)
 {
 	// Add validator to form
 	global $user;
 				
 	if(in_array('Applicant',$user->roles) || in_array('Rider/Applicant',$user->roles) || in_array('Rider',$user->roles) ||  in_array('micro site owner',$user->roles)){
-		array_unshift($form['#submit'],'sacredride_helper_user_profile_form_submit');
+		array_unshift($form['#submit'],'hook_helper_user_profile_form_submit');
 	}
 	
 	/*if(in_array('admin',$user->roles)){
-		drupal_add_js(drupal_get_path('module', 'sacredride_helper') . '/js/sacredride_helper_user_profile.js', 'file');
+		drupal_add_js(drupal_get_path('module', 'hook_helper') . '/js/hook_helper_user_profile.js', 'file');
 	}
 
-	drupal_add_js(drupal_get_path('module', 'sacredride_helper') . '/js/sacredride_helper_user_genral_profile.js', 'file');
+	drupal_add_js(drupal_get_path('module', 'hook_helper') . '/js/hook_helper_user_genral_profile.js', 'file');
 	
 	if(!in_array('admin',$user->roles) && (in_array('micro site owner',$user->roles) || in_array('Driver',$user->roles) || in_array('Guides',$user->roles) || in_array('Ride Director',$user->roles) || in_array('Support Staff',$user->roles) || in_array('Office Staff',$user->roles))){
-		drupal_add_js(drupal_get_path('module', 'sacredride_helper') . '/js/sacredride_staff_user_profile.js', 'file');
-		//drupal_add_css(drupal_get_path('module', 'sacredride_helper') . '/css/sacredride_public_profile.css', 'file');
+		drupal_add_js(drupal_get_path('module', 'hook_helper') . '/js/hook_staff_user_profile.js', 'file');
+		//drupal_add_css(drupal_get_path('module', 'hook_helper') . '/css/hook_public_profile.css', 'file');
 	}
 	
 	if(in_array('micro site owner',$user->roles)){
-		drupal_add_css(drupal_get_path('module', 'sacredride_helper') . '/css/sacredride_public_profile.css', 'file');
+		drupal_add_css(drupal_get_path('module', 'hook_helper') . '/css/hook_public_profile.css', 'file');
 	}*/
 }
 /**
@@ -250,19 +250,19 @@ function sacredride_helper_alter_user_profile_form(&$form, &$form_state)
  * @param  array $form_state Form state object
  * @return void
  */
-function sacredride_helper_alter_ride_node_form(&$form, &$form_state){
+function hook_helper_alter_ride_node_form(&$form, &$form_state){
 	
 	
 	if(isset($form_state['build_info']['args']['0']->field_ride_images) && !empty($form_state['build_info']['args']['0']->field_ride_images)){
 		
-		$form['sacredride_helper']['sacredride_helper_ride_image'] = array(
+		$form['hook_helper']['hook_helper_ride_image'] = array(
 					'#type' => 'value',
 					'#value' => 'yes'
 			);
 		
 	}else{
 		
-		$form['sacredride_helper']['sacredride_helper_ride_image'] = array(
+		$form['hook_helper']['hook_helper_ride_image'] = array(
 					'#type' => 'value',
 					'#value' => 'no'
 			);
@@ -282,25 +282,25 @@ function sacredride_helper_alter_ride_node_form(&$form, &$form_state){
 		$someCurrency	= $citem->currency;
 	}
 	
-	$form['sacredride_helper']['ride_currency'] = array(
+	$form['hook_helper']['ride_currency'] = array(
 					'#type' => 'value',
 					'#value' => $someCurrency
 			);
-	$form['sacredride_helper']['ride_host'] = array(
+	$form['hook_helper']['ride_host'] = array(
 					'#type' => 'value',
 					'#value' => $host
 			);
 	
-	$form['#after_build'][] = '_sacredride_helper_add_external_files_ride_page';
+	$form['#after_build'][] = '_hook_helper_add_external_files_ride_page';
 	
-	$form['#validate'][] = 'sacredride_helper_ride_node_form_validate';
+	$form['#validate'][] = 'hook_helper_ride_node_form_validate';
 	
 }
 
 
-function sacredride_helper_ride_node_form_validate($form, &$form_state) {
+function hook_helper_ride_node_form_validate($form, &$form_state) {
    
-	if($_SERVER['HTTP_HOST']=="valais1.sacredrides.com"){
+	if($_SERVER['HTTP_HOST']=="valais1.hooks.com"){
 		//echo "<pre>";print_r($form_state['values']);
 	}
 	
@@ -317,28 +317,28 @@ function sacredride_helper_ride_node_form_validate($form, &$form_state) {
 }
 
 
-function _sacredride_helper_add_external_files_ride_page($form, $form_state){
+function _hook_helper_add_external_files_ride_page($form, $form_state){
 		
 		drupal_add_js(array(
-			'sacredride_helper_ride_currency' => $form['sacredride_helper']['ride_currency']['#value']
+			'hook_helper_ride_currency' => $form['hook_helper']['ride_currency']['#value']
 		), 'setting');
 	
 
 		drupal_add_js(array(
-			'sacredride_helper_ride_host_default_value' => $form['sacredride_helper']['ride_host']['#value']
+			'hook_helper_ride_host_default_value' => $form['hook_helper']['ride_host']['#value']
 		), 'setting');
 
 
 		
 		drupal_add_js(array(
-			'sacredride_helper_ride_image' => $form['sacredride_helper']['sacredride_helper_ride_image']['#value']
+			'hook_helper_ride_image' => $form['hook_helper']['hook_helper_ride_image']['#value']
 		), 'setting');
   	
   	
   	
-	drupal_add_js(drupal_get_path('theme', 'sacredrides') . '/js/ride_price.js', 'file');
+	drupal_add_js(drupal_get_path('theme', 'hooks') . '/js/ride_price.js', 'file');
 	
-	drupal_add_js(drupal_get_path('module', 'sacredride_helper') . '/js/sacredride_helper_ride_image.js', 'file');
+	drupal_add_js(drupal_get_path('module', 'hook_helper') . '/js/hook_helper_ride_image.js', 'file');
 	return $form;
 }
 
@@ -349,10 +349,10 @@ function _sacredride_helper_add_external_files_ride_page($form, $form_state){
  * @param  array $form_state Form state object
  * @return void
  */
-function sacredride_helper_headerfooter_page_form(&$form, &$form_state){
+function hook_helper_headerfooter_page_form(&$form, &$form_state){
 	$host				= trim($_SERVER['HTTP_HOST']);
-	drupal_add_js(array('sacredride_helper_header_footer_host_default_value' =>$host), 'setting');
-	drupal_add_js(drupal_get_path('module', 'sacredride_helper') . '/js/sacredride_helper_headerfooter.js', 'file');
+	drupal_add_js(array('hook_helper_header_footer_host_default_value' =>$host), 'setting');
+	drupal_add_js(drupal_get_path('module', 'hook_helper') . '/js/hook_helper_headerfooter.js', 'file');
 }
 
 /**
@@ -361,7 +361,7 @@ function sacredride_helper_headerfooter_page_form(&$form, &$form_state){
  * @param  array $form_state Form state object
  * @return void
  */
-function sacredride_helper_user_profile_form_submit(&$form, &$form_state)
+function hook_helper_user_profile_form_submit(&$form, &$form_state)
 {
 	// If first and last name match, throw error
 			global $user;
@@ -391,7 +391,7 @@ function sacredride_helper_user_profile_form_submit(&$form, &$form_state)
 					),
 				);
 	
-				$url	= 'http://getaways-site-control.sacredrides.com/booking/users/add_users';
+				$url	= 'http://getaways-site-control.hooks.com/booking/users/add_users';
 				$result = drupal_http_request($url, $options);
 				
 				
@@ -438,7 +438,7 @@ function sacredride_helper_user_profile_form_submit(&$form, &$form_state)
 					$templaeArray 	= $record;
 				}
 				
-			$dashboard_url	= "http://www.sacredrides.com/dashboard?dashboard_link=".base64_encode(base64_encode($uid));	
+			$dashboard_url	= "http://www.hooks.com/dashboard?dashboard_link=".base64_encode(base64_encode($uid));	
 			
 			$to				= $mail;
 			
@@ -454,7 +454,7 @@ function sacredride_helper_user_profile_form_submit(&$form, &$form_state)
 			
 			$cong_message 	= str_replace('[DASHBOARD_URL]', $dashboard_url,$cong_message);
 			
-			$headers       ='MIME-Version: 1.0' . "\r\n" .'Content-type: text/html; charset=iso-8859-1' . "\r\n" .'From: sacredrides@gmail.com' . "\r\n" .'Reply-To: sacredrides@gmail.com' . "\r\n" .'X-Mailer: PHP/' . phpversion();
+			$headers       ='MIME-Version: 1.0' . "\r\n" .'Content-type: text/html; charset=iso-8859-1' . "\r\n" .'From: hooks@gmail.com' . "\r\n" .'Reply-To: hooks@gmail.com' . "\r\n" .'X-Mailer: PHP/' . phpversion();
 			
 			$send	      =  mail($to, $cong_subject, $cong_message, $headers);*/
 
@@ -466,15 +466,15 @@ function sacredride_helper_user_profile_form_submit(&$form, &$form_state)
 	* @param  array $form_state Form state object
 	* @return void
 	*/
-	function sacredride_helper_alter_user_register_form(&$form, &$form_state){
+	function hook_helper_alter_user_register_form(&$form, &$form_state){
 	// Add validator to form
-		$form['#validate'][] = 'sacredride_helper_user_register_form_validate';
+		$form['#validate'][] = 'hook_helper_user_register_form_validate';
 		
 		global $user;
 	
 		if(in_array('admin',$user->roles)){
 			
-			drupal_add_js(drupal_get_path('module', 'sacredride_helper') . '/js/sacredride_helper_user_profile.js', 'file');
+			drupal_add_js(drupal_get_path('module', 'hook_helper') . '/js/hook_helper_user_profile.js', 'file');
 		}
 	}
 	
@@ -484,7 +484,7 @@ function sacredride_helper_user_profile_form_submit(&$form, &$form_state)
  * @param  array $form_state Form state object
  * @return void
  */
-function sacredride_helper_user_register_form_validate(&$form, &$form_state)
+function hook_helper_user_register_form_validate(&$form, &$form_state)
 {
 	// If first and last name match, throw error
 	if(!empty($form_state['input']['field_profile_first_name'][LANGUAGE_NONE][0]['value']) && !empty($form_state['input']['field_profile_last_name'][LANGUAGE_NONE][0]['value'])){
@@ -504,7 +504,7 @@ function sacredride_helper_user_register_form_validate(&$form, &$form_state)
 }
 
 
-function sacredride_helper_contact_spaming_validate($form, &$form_state) {
+function hook_helper_contact_spaming_validate($form, &$form_state) {
    
 	if(!empty($form_state['values']['submitted']['first_name']) && !empty($form_state['values']['submitted']['last_name'])){
 		if($form_state['values']['submitted']['first_name']==$form_state['values']['submitted']['last_name']){
@@ -520,7 +520,7 @@ function sacredride_helper_contact_spaming_validate($form, &$form_state) {
  * @param  array $form       Form object
  * @param  array $form_state Form state object
  */
- function sacredride_helper_form_webform_client_form_2884_alter(&$form, &$form_state) {
+ function hook_helper_form_webform_client_form_2884_alter(&$form, &$form_state) {
 		
 		global $user;
 				
@@ -643,15 +643,15 @@ function sacredride_helper_contact_spaming_validate($form, &$form_state) {
 			if(isset($option_Setting) && !empty($option_Setting)){
 					if(isset($end_date)){
 						$endate['end_date']	= 	$end_date;
-						drupal_add_js(array('sacredride_helper_date' => $end_date), 'setting');
+						drupal_add_js(array('hook_helper_date' => $end_date), 'setting');
 					}else{
-						drupal_add_js(array('sacredride_helper_date' => ''), 'setting');
+						drupal_add_js(array('hook_helper_date' => ''), 'setting');
 					}
-					drupal_add_js(array('sacredride_helper' => $option_Setting), 'setting');
+					drupal_add_js(array('hook_helper' => $option_Setting), 'setting');
 					
-					drupal_add_js(array('sacredride_helper_user_array' => json_encode($user_info)), 'setting');
+					drupal_add_js(array('hook_helper_user_array' => json_encode($user_info)), 'setting');
 					
-					drupal_add_js(drupal_get_path('module', 'sacredride_helper') . '/js/sacredride_helper.js', 'file'); 
+					drupal_add_js(drupal_get_path('module', 'hook_helper') . '/js/hook_helper.js', 'file'); 
 			}
 			$form['submitted']['the_sections_below_are_optional_but_are_quick_to_complete_and_very_appreciated']['the_guiding']['lead_guides_name']['#default_value'] 		  = isset($lead_guide_name)?$lead_guide_name:"";
 			$form['submitted']['the_sections_below_are_optional_but_are_quick_to_complete_and_very_appreciated']['the_guiding']['assistant_guide']['#default_value']  		  = isset($assi1_guide_name)?$assi1_guide_name:"";
@@ -660,7 +660,7 @@ function sacredride_helper_contact_spaming_validate($form, &$form_state) {
 				$form['submitted']['rider_name']['#default_value']	= $user->name;
 			}
 			
-			drupal_add_js(drupal_get_path('module', 'sacredride_helper') . '/js/sacredride_helper_end_of_survey.js', 'file');
+			drupal_add_js(drupal_get_path('module', 'hook_helper') . '/js/hook_helper_end_of_survey.js', 'file');
 			
 		}else{
 			unset($form['submitted']['rider_name']);
@@ -672,7 +672,7 @@ function sacredride_helper_contact_spaming_validate($form, &$form_state) {
  * @param  array $form       Form object
  * @param  array $form_state Form state object
  */
- function sacredride_helper_form_webform_client_form_2432_alter (&$form, &$form_state){
+ function hook_helper_form_webform_client_form_2432_alter (&$form, &$form_state){
 		global $user;
 		$rideId			= "";
 		$startDate		= "";
@@ -724,7 +724,7 @@ function sacredride_helper_contact_spaming_validate($form, &$form_state) {
   * payent web-form
   * 
   **/
-  function sacredride_helper_form_webform_client_form_3226_alter (&$form, &$form_state){
+  function hook_helper_form_webform_client_form_3226_alter (&$form, &$form_state){
 		global $user;
 		$host	= $_SERVER['HTTP_HOST'];
 		if($user->uid){
@@ -773,7 +773,7 @@ function sacredride_helper_contact_spaming_validate($form, &$form_state) {
   **/
  
  
-  function sacredride_helper_form_webform_client_form_3135_alter (&$form, &$form_state){
+  function hook_helper_form_webform_client_form_3135_alter (&$form, &$form_state){
 		$some_node_id		= arg(2);
 		$som_node_array		= node_load($some_node_id);
 		$ride_type			= $som_node_array->field_ride_type['und'][0]['value'];
@@ -783,7 +783,7 @@ function sacredride_helper_contact_spaming_validate($form, &$form_state) {
 		
  }
  
- function sacredride_helper_form_webform_client_form_3156_alter (&$form, &$form_state){	 
+ function hook_helper_form_webform_client_form_3156_alter (&$form, &$form_state){	 
 	 
 	$domainName	=	$_SERVER['HTTP_HOST'];
 		
@@ -794,7 +794,7 @@ function sacredride_helper_contact_spaming_validate($form, &$form_state) {
 	if(!empty($GetRecord) && $GetRecord['field_primary_email_value']!=""){
 		$MicrositeOwnerPrimaryEmail	=	$GetRecord['field_primary_email_value'];
 	}else{
-		$MicrositeOwnerPrimaryEmail	=	'getaways.support@sacredrides.com';
+		$MicrositeOwnerPrimaryEmail	=	'getaways.support@hooks.com';
 	}
 	
 	 
@@ -805,7 +805,7 @@ function sacredride_helper_contact_spaming_validate($form, &$form_state) {
 	
 }
  
- function sacredride_helper_webform_submission_presave($node, &$submission){
+ function hook_helper_webform_submission_presave($node, &$submission){
 			$host		   = $_SERVER['HTTP_HOST'];
 			$nodeId		   = variable_get($host.'site_setup_page','');
 			$siteSetupdate = node_load($nodeId);
@@ -855,7 +855,7 @@ function sacredride_helper_contact_spaming_validate($form, &$form_state) {
 							),
 							);
 
-							$url	= 'https://sacredrides.com/booking/users/ride_detail_micoriste_isconnect';
+							$url	= 'https://hooks.com/booking/users/ride_detail_micoriste_isconnect';
 							$result = drupal_http_request($url, $options);
 						}
 				}
@@ -907,13 +907,13 @@ function sacredride_helper_contact_spaming_validate($form, &$form_state) {
  }
  
  
- function sacredride_helper_mail_alter(&$message){
+ function hook_helper_mail_alter(&$message){
 		
 			$host		   		= $_SERVER['HTTP_HOST'];
 			
-			if($host=='getaways-site-control.sacredrides.com'){
+			if($host=='getaways-site-control.hooks.com'){
 				$location		= 'Getaways';
-				$formaddress	= 'getaways.support@sacredrides.com';
+				$formaddress	= 'getaways.support@hooks.com';
 			}else{
 				$nodeId		   = variable_get($host.'site_setup_page','');
 				$siteSetupdate = node_load($nodeId);
@@ -956,7 +956,7 @@ function sacredride_helper_contact_spaming_validate($form, &$form_state) {
 			}
 			
 			
-			//sent notification to getaways.sacredridescom
+			//sent notification to getaways.hookscom
 			$userArray	= user_load_by_mail($userMail);
 			
 			$staffMail	= $userArray->mail;
@@ -986,7 +986,7 @@ function sacredride_helper_contact_spaming_validate($form, &$form_state) {
 			$mailBNody		 = strip_tags($mailBNodyblock['content']);
 			
 			$name			 = $firstName." ".$lastName;
-			$URL			 = 'http://getaways-site-control.sacredrides.com/user/'.$userArray->uid;
+			$URL			 = 'http://getaways-site-control.hooks.com/user/'.$userArray->uid;
 			$roles			 = implode(', ',$userArray->roles);
 			
 			$mailBNody		 = str_replace('[LOCATION]',$location,$mailBNody);
@@ -999,7 +999,7 @@ function sacredride_helper_contact_spaming_validate($form, &$form_state) {
 			$messages = array(
 				'id' => $message['module'],
 				'from' =>'',
-				'to' =>'getaways.support@sacredrides.com',
+				'to' =>'getaways.support@hooks.com',
 				'subject' => $subject,
 				'body' =>$mailBNody,
 				'headers' => array(
@@ -1044,11 +1044,11 @@ function sacredride_helper_contact_spaming_validate($form, &$form_state) {
 			
 			$domainUrl				= 'http://'.$host.'/login_one_time';
 			
-			$message['body']['0']	= str_replace('http://getaways-site-control.sacredrides.com/login_one_time',$domainUrl,$message['body']['0']);
+			$message['body']['0']	= str_replace('http://getaways-site-control.hooks.com/login_one_time',$domainUrl,$message['body']['0']);
 			
 			$message['body']['0']	= str_replace('[NEW_ONE_TIME_LOGIN_LINK]',$loginOnetimeLInk,$message['body']['0']);
 			
-			$form	 = 'getaways.support@sacredrides.com'; 
+			$form	 = 'getaways.support@hooks.com'; 
 			$messages = array(
 				'id' => $message['module'],
 				'from' =>'',
@@ -1074,7 +1074,7 @@ function sacredride_helper_contact_spaming_validate($form, &$form_state) {
 			$messages = array(
 				'id' => $message['module'],
 				'from' =>'',
-				'to' =>'getaways.support@sacredrides.com',
+				'to' =>'getaways.support@hooks.com',
 				'subject' => $message['subject'],
 				'body' =>$message['body']['0'],
 				'headers' => array(
@@ -1103,10 +1103,10 @@ function sacredride_helper_contact_spaming_validate($form, &$form_state) {
  */
  
  
- function sacredride_helper_alter_site_set_up_form(&$form, &$form_state){
+ function hook_helper_alter_site_set_up_form(&$form, &$form_state){
 	
 	$host				= trim($_SERVER['HTTP_HOST']);
-	$form['sacredride_helper']['type'] = array(
+	$form['hook_helper']['type'] = array(
 					'#type' => 'value',
 					'#value' => 'site_set_up'
 			);
@@ -1134,28 +1134,28 @@ function sacredride_helper_contact_spaming_validate($form, &$form_state) {
 			
 			
 			
-		    $form['sacredride_helper']['sacredride_helper_lat'] = array(
+		    $form['hook_helper']['hook_helper_lat'] = array(
 					'#type' => 'value',
 					'#value' => $lat
 			);
 			
-			 $form['sacredride_helper']['sacredride_helper_long'] = array(
+			 $form['hook_helper']['hook_helper_long'] = array(
 					'#type' => 'value',
 					'#value' => $long
 			);
 			
-			 $form['sacredride_helper']['locationDefault'] = array(
+			 $form['hook_helper']['locationDefault'] = array(
 					'#type' => 'value',
 					'#value' => $locationDefault
 			);
 			
-			 $form['sacredride_helper']['defaultRadioValue'] = array(
+			 $form['hook_helper']['defaultRadioValue'] = array(
 					'#type' => 'value',
 					'#value' => $defaultRadioValue
 			);
 			
 			
-			$form['sacredride_helper']['host'] = array(
+			$form['hook_helper']['host'] = array(
 					'#type' => 'value',
 					'#value' => $host
 			);
@@ -1163,15 +1163,15 @@ function sacredride_helper_contact_spaming_validate($form, &$form_state) {
 
 		//get all location form sacredr main site.
 			 $other_database = array(
-			  'database' => 'sacredrides_stag',
+			  'database' => 'hooks_stag',
 			  'username' => 'signity', // assuming this is necessary
 			  'password' => 'signity@123', // assuming this is necessary
-			  'host' => 'sacredrides.cbgtakhqmalw.us-east-1.rds.amazonaws.com', // assumes localhost
+			  'host' => 'hooks.cbgtakhqmalw.us-east-1.rds.amazonaws.com', // assumes localhost
 			  'driver' => 'mysql', // replace with your database driver
 			);
 			// replace 'YourDatabaseKey' with something that's unique to your module
-			Database::addConnectionInfo('sacredride_helper', 'default', $other_database);
-			db_set_active('sacredride_helper');
+			Database::addConnectionInfo('hook_helper', 'default', $other_database);
+			db_set_active('hook_helper');
 			
 			$query = "select node.nid,field_data_field_ridelocation_ref.field_ridelocation_ref_nid from node left join field_data_field_ridelocation_ref on node.nid= field_data_field_ridelocation_ref.entity_id where node.type='ride' and node.status='1'";
 			
@@ -1184,7 +1184,7 @@ function sacredride_helper_contact_spaming_validate($form, &$form_state) {
 			db_set_active(); // without the paramater means set back to the default for the site
 			
 			
-			 $form['sacredride_helper']['rideLocationArray'] = array(
+			 $form['hook_helper']['rideLocationArray'] = array(
 					'#type' => 'value',
 					'#value' => $rideLocationArray
 			);
@@ -1194,11 +1194,11 @@ function sacredride_helper_contact_spaming_validate($form, &$form_state) {
 			
 			$form['field_map_location']['#suffix'] = "<div id='map' style='width: 550px; height: 400px;'></div>";
 			
-			$form['#after_build'][] = '_sacredride_helper_add_external_files_sitesetup_page';
+			$form['#after_build'][] = '_hook_helper_add_external_files_sitesetup_page';
 			
-			/*drupal_add_js(array('sacredride_helper_location__rides_array' => json_encode($user_info)), 'setting');
+			/*drupal_add_js(array('hook_helper_location__rides_array' => json_encode($user_info)), 'setting');
 			
-			drupal_add_js(drupal_get_path('module', 'sacredride_helper') . '/js/sacredride_helper_site_setup.js', 'file');*/
+			drupal_add_js(drupal_get_path('module', 'hook_helper') . '/js/hook_helper_site_setup.js', 'file');*/
 	}else{
 			$locationDefault	= '';
 			$defaultRadioValue	= 'no';
@@ -1207,42 +1207,42 @@ function sacredride_helper_contact_spaming_validate($form, &$form_state) {
 			
 			
 			
-		    $form['sacredride_helper']['sacredride_helper_lat'] = array(
+		    $form['hook_helper']['hook_helper_lat'] = array(
 					'#type' => 'value',
 					'#value' => $lat
 			);
 			
-			 $form['sacredride_helper']['sacredride_helper_long'] = array(
+			 $form['hook_helper']['hook_helper_long'] = array(
 					'#type' => 'value',
 					'#value' => $long
 			);
 			
-			 $form['sacredride_helper']['locationDefault'] = array(
+			 $form['hook_helper']['locationDefault'] = array(
 					'#type' => 'value',
 					'#value' => $locationDefault
 			);
 			
-			 $form['sacredride_helper']['defaultRadioValue'] = array(
+			 $form['hook_helper']['defaultRadioValue'] = array(
 					'#type' => 'value',
 					'#value' => $defaultRadioValue
 			);
 			
 			
-			$form['sacredride_helper']['host'] = array(
+			$form['hook_helper']['host'] = array(
 					'#type' => 'value',
 					'#value' => $host
 			);
 			
 			 $other_database = array(
-			  'database' => 'sacredrides_stag',
+			  'database' => 'hooks_stag',
 			  'username' => 'signity', // assuming this is necessary
 			  'password' => 'signity@123', // assuming this is necessary
-			  'host' => 'sacredrides.cbgtakhqmalw.us-east-1.rds.amazonaws.com', // assumes localhost
+			  'host' => 'hooks.cbgtakhqmalw.us-east-1.rds.amazonaws.com', // assumes localhost
 			  'driver' => 'mysql', // replace with your database driver
 			);
 			// replace 'YourDatabaseKey' with something that's unique to your module
-			Database::addConnectionInfo('sacredride_helper', 'default', $other_database);
-			db_set_active('sacredride_helper');
+			Database::addConnectionInfo('hook_helper', 'default', $other_database);
+			db_set_active('hook_helper');
 			
 			$query = "select node.nid,field_data_field_ridelocation_ref.field_ridelocation_ref_nid from node left join field_data_field_ridelocation_ref on node.nid= field_data_field_ridelocation_ref.entity_id where node.type='ride' and node.status='1'";
 			
@@ -1253,7 +1253,7 @@ function sacredride_helper_contact_spaming_validate($form, &$form_state) {
 				$rideLocationArray[$result->field_ridelocation_ref_nid][]	= $result->nid;
 			}
 			
-			 $form['sacredride_helper']['rideLocationArray'] = array(
+			 $form['hook_helper']['rideLocationArray'] = array(
 					'#type' => 'value',
 					'#value' => $rideLocationArray
 			);
@@ -1264,13 +1264,13 @@ function sacredride_helper_contact_spaming_validate($form, &$form_state) {
 			
 			$form['field_map_location']['#suffix'] = "<div id='map' style='width: 550px; height: 400px;'></div>";
 			
-			$form['#after_build'][] = '_sacredride_helper_add_external_files_sitesetup_page';
+			$form['#after_build'][] = '_hook_helper_add_external_files_sitesetup_page';
 	}
  }
  
-function  _sacredride_helper_add_external_files_sitesetup_page($form, $form_state){
+function  _hook_helper_add_external_files_sitesetup_page($form, $form_state){
 			
-			$form['sacredride_helper']['type'] = array(
+			$form['hook_helper']['type'] = array(
 					'#type' => 'value',
 					'#value' => 'site_set_up'
 			);
@@ -1278,53 +1278,53 @@ function  _sacredride_helper_add_external_files_sitesetup_page($form, $form_stat
 			
 			
 				drupal_add_js(array(
-					'sacredride_helper_long' => $form['sacredride_helper']['sacredride_helper_long']['#value']
+					'hook_helper_long' => $form['hook_helper']['hook_helper_long']['#value']
 				), 'setting');
   			
   			
   			
 				drupal_add_js(array(
-					'sacredride_helper_lat' => $form['sacredride_helper']['sacredride_helper_lat']['#value']
+					'hook_helper_lat' => $form['hook_helper']['hook_helper_lat']['#value']
 				), 'setting');
   			
   			
   			
 				drupal_add_js(array(
-					'sacredride_helper_host_default_value' => $form['sacredride_helper']['host']['#value']
+					'hook_helper_host_default_value' => $form['hook_helper']['host']['#value']
 				), 'setting');
   			
   			
   			
 				drupal_add_js(array(
-					'sacredride_helper_location_default_value' => $form['sacredride_helper']['locationDefault']['#value']
+					'hook_helper_location_default_value' => $form['hook_helper']['locationDefault']['#value']
 				), 'setting');
   			
   			
 				drupal_add_js(array(
-					'sacredride_helper_radio_default_value' => $form['sacredride_helper']['defaultRadioValue']['#value']
+					'hook_helper_radio_default_value' => $form['hook_helper']['defaultRadioValue']['#value']
 				), 'setting');
   			
 	
 
-			if ($form['sacredride_helper']['rideLocationArray']['#value']) {
-				drupal_add_js(array('sacredride_helper_location__rides_array' => json_encode($form['sacredride_helper']['rideLocationArray']['#value'])), 'setting');
+			if ($form['hook_helper']['rideLocationArray']['#value']) {
+				drupal_add_js(array('hook_helper_location__rides_array' => json_encode($form['hook_helper']['rideLocationArray']['#value'])), 'setting');
 				
-				drupal_add_js(drupal_get_path('module', 'sacredride_helper') . '/js/sacredride_helper_site_setup.js', 'file');
+				drupal_add_js(drupal_get_path('module', 'hook_helper') . '/js/hook_helper_site_setup.js', 'file');
   			}
 			
 			
-			drupal_add_css(drupal_get_path('module', 'sacredride_helper') . '/css/sacredride_location_autocomplete.css', 'file');
+			drupal_add_css(drupal_get_path('module', 'hook_helper') . '/css/hook_location_autocomplete.css', 'file');
 			
 			drupal_add_js("https://maps.googleapis.com/maps/api/js?key=AIzaSyAlYNtrXpw5pe4PZunUPeteYu0nSzGF8eE&libraries=places");
-			//drupal_add_js(drupal_get_path('module', 'sacredride_helper') . '/js/sacredride_location_autocomplete.js', 'file');
+			//drupal_add_js(drupal_get_path('module', 'hook_helper') . '/js/hook_location_autocomplete.js', 'file');
 			
-			drupal_add_js(drupal_get_path('module', 'sacredride_helper') . '/js/locationpicker.jquery.js', 'file');
-			drupal_add_js(drupal_get_path('module', 'sacredride_helper') . '/js/sacredride_location_picker.js', 'file');
+			drupal_add_js(drupal_get_path('module', 'hook_helper') . '/js/locationpicker.jquery.js', 'file');
+			drupal_add_js(drupal_get_path('module', 'hook_helper') . '/js/hook_location_picker.js', 'file');
 			
 			return $form;
 }
 
-function sacredride_helper_node_insert($node) {
+function hook_helper_node_insert($node) {
 	if($node->type=='ride'){
 		
 		global $user;
@@ -1347,9 +1347,9 @@ function sacredride_helper_node_insert($node) {
 		
 			$host		   		= $_SERVER['HTTP_HOST'];
 			
-			if($host=='getaways-site-control.sacredrides.com'){
+			if($host=='getaways-site-control.hooks.com'){
 				$location		= 'Getaways';
-				$formaddress	= 'getaways.support@sacredrides.com';
+				$formaddress	= 'getaways.support@hooks.com';
 			}else{
 				$nodeId		   = variable_get($host.'site_setup_page','');
 				$siteSetupdate = node_load($nodeId);
@@ -1367,12 +1367,12 @@ function sacredride_helper_node_insert($node) {
 			$mailBNodyblock  = module_invoke('block', 'block_view', '135');
 			$mailBNody		 = strip_tags($mailBNodyblock['content']);
 			
-			$URL			 ='http://getaways-site-control.sacredrides.com/user?destination=director-checklist';
+			$URL			 ='http://getaways-site-control.hooks.com/user?destination=director-checklist';
 			$mailBNody		 = str_replace('[GETAWAYS_DIRECTOR_PORTAL_URL]',$URL,$mailBNody);
 			$messages = array(
 				'id' => $message['module'],
 				'from' =>'',
-				'to' =>'getaways.support@sacredrides.com',
+				'to' =>'getaways.support@hooks.com',
 				'subject' => $subject,
 				'body' =>$mailBNody,
 				'headers' => array(
@@ -1396,9 +1396,9 @@ function sacredride_helper_node_insert($node) {
 		
 			$host		   		= $_SERVER['HTTP_HOST'];
 			
-			if($host=='getaways-site-control.sacredrides.com'){
+			if($host=='getaways-site-control.hooks.com'){
 				$location		= 'Getaways';
-				$formaddress	= 'getaways.support@sacredrides.com';
+				$formaddress	= 'getaways.support@hooks.com';
 			}else{
 				$nodeId		   = variable_get($host.'site_setup_page','');
 				$siteSetupdate = node_load($nodeId);
@@ -1417,13 +1417,13 @@ function sacredride_helper_node_insert($node) {
 			$mailBNody		 = strip_tags($mailBNodyblock['content']);
 			
 			
-			$URL			 = 'http://getaways-site-control.sacredrides.com/user?destination=director-checklist';
+			$URL			 = 'http://getaways-site-control.hooks.com/user?destination=director-checklist';
 			$mailBNody		 = str_replace('[GETAWAYS_DIRECTOR_PORTAL_URL]',$URL,$mailBNody);
 
 			$messages = array(
 				'id' => $message['module'],
 				'from' =>'',
-				'to' =>'getaways.support@sacredrides.com',
+				'to' =>'getaways.support@hooks.com',
 				'subject' => $subject,
 				'body' =>$mailBNody,
 				'headers' => array(
@@ -1501,14 +1501,14 @@ function sacredride_helper_node_insert($node) {
 			),
 		);
 		
-		$url	= 'http://getaways-site-control.sacredrides.com/booking/users/addlocations';
+		$url	= 'http://getaways-site-control.hooks.com/booking/users/addlocations';
 		$result = drupal_http_request($url, $options);
 	
 		
 	}
 }
 
-function sacredride_helper_node_update($node) {
+function hook_helper_node_update($node) {
 	if($node->type=='ride'){
 		
 		global $user;
@@ -1585,10 +1585,10 @@ function sacredride_helper_node_update($node) {
 			),
 		);
 		
-		$url	= 'http://getaways-site-control.sacredrides.com/booking/users/addlocations';
+		$url	= 'http://getaways-site-control.hooks.com/booking/users/addlocations';
 		$result = drupal_http_request($url, $options);
 		
-		$url	= 'http://getaways.sacredrides.com/booking/users/addlocations';
+		$url	= 'http://getaways.hooks.com/booking/users/addlocations';
 		$result = drupal_http_request($url, $options);
 	
 		
@@ -1596,7 +1596,7 @@ function sacredride_helper_node_update($node) {
 }
 
 
-function sacredride_helper_alter_blog_form(&$form, &$form_state){
+function hook_helper_alter_blog_form(&$form, &$form_state){
 	
 	global $user;
 	
@@ -1604,24 +1604,24 @@ function sacredride_helper_alter_blog_form(&$form, &$form_state){
 	
 	if(in_array('admin',$user->roles) && !in_array('Developer',$user->roles) ){
 		
-		drupal_add_js(drupal_get_path('theme', 'sacredrides') . '/js/blog_custom.js', 'file');
+		drupal_add_js(drupal_get_path('theme', 'hooks') . '/js/blog_custom.js', 'file');
 	}
 	$description	= 'This is the title of your blog post. It is one of the most important aspects of the blog post in terms of Search Engine Optimization, so you should do some research into which keywords and keyword phrases you want to target, and then use them in your title. See your manual for additional instructions regarding content creation';
 	
 	$host				= trim($_SERVER['HTTP_HOST']);
 	
-	drupal_add_js(array('sacredride_helper_host_blog_value' =>$host), 'setting');
+	drupal_add_js(array('hook_helper_host_blog_value' =>$host), 'setting');
 	
 	
-	drupal_add_js(drupal_get_path('module', 'sacredride_helper') . '/js/sacredride_helper_blog.js', 'file');
+	drupal_add_js(drupal_get_path('module', 'hook_helper') . '/js/hook_helper_blog.js', 'file');
 	
 	$form['title']['#description'] = nl2br(field_filter_xss($description));
 	
-	array_unshift($form['#submit'],'sacredride_helper_blog_form_submit');
+	array_unshift($form['#submit'],'hook_helper_blog_form_submit');
 }
 
 
-function sacredride_helper_blog_form_submit(&$form, &$form_state){
+function hook_helper_blog_form_submit(&$form, &$form_state){
 	global $user;
 	if(isset($form_state['values']['field_subject_to_moderator_appro']['und']['0']['value']) && $form_state['values']['field_subject_to_moderator_appro']['und']['0']['value']=='1' && empty($form_state['values']['nid'])){
 	
@@ -1671,14 +1671,14 @@ function sacredride_helper_blog_form_submit(&$form, &$form_state){
 				),
 			);
 			
-			$url	= 'https://getaways.sacredrides.com/dynamic/blog';
+			$url	= 'https://getaways.hooks.com/dynamic/blog';
 			$result = drupal_http_request($url, $options);
 	}
 }
 
 
 
-function sacredride_helper_wysiwyg_editor_settings_alter(&$settings, $context) {
+function hook_helper_wysiwyg_editor_settings_alter(&$settings, $context) {
 
   if ($context['profile']->editor == 'tinymce') {
     $settings['style_formats'] = array(
@@ -1690,60 +1690,60 @@ function sacredride_helper_wysiwyg_editor_settings_alter(&$settings, $context) {
   }
 }
 
-function sacredride_helper_front_page_form (&$form, &$form_state){
+function hook_helper_front_page_form (&$form, &$form_state){
 	$host					= trim($_SERVER['HTTP_HOST']);
-	$form['sacredride_helper']['font_page_host'] = array(
+	$form['hook_helper']['font_page_host'] = array(
 					'#type' => 'value',
 					'#value' => $host
 			);
-	$form['#after_build'][] = '_sacredride_helper_add_external_files_front_page';
+	$form['#after_build'][] = '_hook_helper_add_external_files_front_page';
 }
 
 
 
-function _sacredride_helper_add_external_files_front_page($form, $form_state){
-  	if ($form['sacredride_helper']['font_page_host']['#value']) {
+function _hook_helper_add_external_files_front_page($form, $form_state){
+  	if ($form['hook_helper']['font_page_host']['#value']) {
 				drupal_add_js(array(
-					'sacredride_helper_host_default_value' => $form['sacredride_helper']['font_page_host']['#value']
+					'hook_helper_host_default_value' => $form['hook_helper']['font_page_host']['#value']
 				), 'setting');
   	}
-	drupal_add_js(drupal_get_path('module', 'sacredride_helper') . '/js/sacredride_helper_frong_page_setup.js', 'file');
+	drupal_add_js(drupal_get_path('module', 'hook_helper') . '/js/hook_helper_frong_page_setup.js', 'file');
 	return $form;
 }
 
 
-function sacredride_helper_ridelisting_page_form(&$form, &$form_state){
+function hook_helper_ridelisting_page_form(&$form, &$form_state){
 	$host				= trim($_SERVER['HTTP_HOST']);
 	
-	$form['sacredride_helper']['list_page_host'] = array(
+	$form['hook_helper']['list_page_host'] = array(
 					'#type' => 'value',
 					'#value' => $host
 			);
-	$form['#after_build'][] = '_sacredride_helper_add_external_files_ridelist_page';
+	$form['#after_build'][] = '_hook_helper_add_external_files_ridelist_page';
 	
-	drupal_add_js(array('sacredride_helper_host_default_value' =>$host), 'setting');
+	drupal_add_js(array('hook_helper_host_default_value' =>$host), 'setting');
 	
 }
 
 
-function _sacredride_helper_add_external_files_ridelist_page($form, $form_state){
-  	if ($form['sacredride_helper']['list_page_host']['#value']) {
+function _hook_helper_add_external_files_ridelist_page($form, $form_state){
+  	if ($form['hook_helper']['list_page_host']['#value']) {
 				drupal_add_js(array(
-					'sacredride_helper_host_default_value' => $form['sacredride_helper']['list_page_host']['#value']
+					'hook_helper_host_default_value' => $form['hook_helper']['list_page_host']['#value']
 				), 'setting');
   	}
-  	drupal_add_js(drupal_get_path('module', 'sacredride_helper') . '/js/sacredride_helper_ridelisting_page_setup.js', 'file');
+  	drupal_add_js(drupal_get_path('module', 'hook_helper') . '/js/hook_helper_ridelisting_page_setup.js', 'file');
 	return $form;
 }
 
-function sacredride_helper_node_access($node, $op, $account) {
+function hook_helper_node_access($node, $op, $account) {
    
    //NODE_ACCESS_DENY,NODE_ACCESS_ALLOW,NODE_ACCESS_IGNORE
       
    $AccessNodeId	=	arg(1);
    $host			= 	trim($_SERVER['HTTP_HOST']);
    
-   //if($host=="valais1.sacredrides.com"){
+   //if($host=="valais1.hooks.com"){
 	   if($op=="view"){
 		$GetNodeDataLoaded	= node_load($AccessNodeId);
 		if($GetNodeDataLoaded->type=='staff_manual_article'){
@@ -1764,7 +1764,7 @@ function sacredride_helper_node_access($node, $op, $account) {
 }
 
 
-function sacredride_helper_comment_insert($comment) {
+function hook_helper_comment_insert($comment) {
   
 		global $user;
 			
@@ -1827,7 +1827,7 @@ function sacredride_helper_comment_insert($comment) {
 			
 			$name			 = $firstName." ".$lastName;
 			$lname			 = $lfirstName." ".$llastName;
-			$URL			 = 'http://getaways-site-control.sacredrides.com/node/'.$comment->nid;
+			$URL			 = 'http://'.$host.'/node/'.$comment->nid;
 			$mailBNody		 = str_replace('[STAFF_NAME]',$name,$mailBNody);
 			$mailBNody		 = str_replace('[URL]',$URL,$mailBNody);
 			$mailBNody		 = str_replace('[COMMNET_TITLE]',$commentText,$mailBNody);
@@ -1877,7 +1877,7 @@ function sacredride_helper_comment_insert($comment) {
 			
 			$name			 = $firstName." ".$lastName;
 
-			$URL			 = 'http://getaways-site-control.sacredrides.com/comment/'.$comment->cid.'#comment-'.$comment->cid;
+			$URL			 = 'http://'.$host.'/comment/'.$comment->cid.'#comment-'.$comment->cid;
 			$commentText	 = $comment->comment_body['und']['0']['value'];
 			
 			$mailBNody		 = str_replace('[STAFF_NAME]',$name,$mailBNody);
@@ -1888,7 +1888,7 @@ function sacredride_helper_comment_insert($comment) {
 			$messages = array(
 				'id' => $message['module'],
 				'from' =>'',
-				'to' =>'getaways.support@sacredrides.com',
+				'to' =>'mailid',
 				'subject' => $subject,
 				'body' =>$mailBNody,
 				'headers' => array(
@@ -1910,7 +1910,7 @@ function sacredride_helper_comment_insert($comment) {
 			$messages = array(
 				'id' => $message['module'],
 				'from' =>'',
-				'to' =>'pawan@signitysolutions.com',
+				'to' =>'mailid',
 				'subject' => $subject,
 				'body' =>$mailBNody,
 				'headers' => array(
@@ -1930,7 +1930,7 @@ function sacredride_helper_comment_insert($comment) {
 			
 	//}
 }
-function sacredride_helper_menu_link_alter(&$item) 
+function hook_helper_menu_link_alter(&$item) 
  {
   $item['options']['alter'] = TRUE;                                                                                                                                                      
  } 
@@ -1938,47 +1938,47 @@ function sacredride_helper_menu_link_alter(&$item)
  
  //alter proo permit form 
  
- function sacredride_helper_proof_permit_node_form(&$form, &$form_state){
+ function hook_helper_proof_permit_node_form(&$form, &$form_state){
 
 	 $form['title']['#prefix'] = "<div class='permit_field'>";
 	 $form['field_permit_expiry_date']['#suffix']	= '</div>';
-	 array_unshift($form['#submit'],'sacredride_helper_custom_proof_permit_submit');
+	 array_unshift($form['#submit'],'hook_helper_custom_proof_permit_submit');
 	 return $form;
 	 
  }
  
- function sacredride_helper_custom_proof_permit_submit(&$form, &$form_state){
+ function hook_helper_custom_proof_permit_submit(&$form, &$form_state){
 	  $form_state['rebuild'] = TRUE;
 	  $form_state['redirect'] = url('launch-checklist', array('absolute' => true));
  }
  
 
  
-  function sacredride_helper_insurance_node_form(&$form, &$form_state){
+  function hook_helper_insurance_node_form(&$form, &$form_state){
 
 	 $form['title']['#prefix'] = "<div class='permit_field'>";
 	 $form['field_permit_expiry_date_in']['#suffix']	= '</div>';
-	 array_unshift($form['#submit'],'sacredride_helper_custom_proof_permit_submit');
+	 array_unshift($form['#submit'],'hook_helper_custom_proof_permit_submit');
 	 return $form;
 	 
  }
  
- function sacredride_helper_first_add_certificate_node_form(&$form, &$form_state){
+ function hook_helper_first_add_certificate_node_form(&$form, &$form_state){
 	 $form['title']['#prefix'] = "<div class='permit_field'>";
 	 $form['field_expiry_date']['#suffix']	= '</div>';
 	 //$form["field_guide_first_aid"]['und']['#default_value']    = $userId;
-	 //array_unshift($form['#submit'],'sacredride_helper_custom_proof_permit_submit');
+	 //array_unshift($form['#submit'],'hook_helper_custom_proof_permit_submit');
     //return $form;
  }
  
  
-   function sacredride_helper_first_aid_submit(&$form, &$form_state){
+   function hook_helper_first_aid_submit(&$form, &$form_state){
 	  $form_state['rebuild'] = TRUE;
 	  $form_state['redirect'] = url('launch-checklist', array('absolute' => true));
  }
  
 
-function sacredride_helper_translated_menu_link_alter(&$item, $map) 
+function hook_helper_translated_menu_link_alter(&$item, $map) 
  {
  	global $user;
  	$host				= trim($_SERVER['HTTP_HOST']);
@@ -2000,7 +2000,7 @@ function sacredride_helper_translated_menu_link_alter(&$item, $map)
 }
 
 /*END OF RIDE SURVEY WBEFORM TRIGGER EMAIL*/
- function sacredride_helper_endridesurvey_form_submit(&$form, &$form_state){
+ function hook_helper_endridesurvey_form_submit(&$form, &$form_state){
 	 
 	 $UserName			=	$form_state['values']['submitted_tree']['rider_name'];
 	 $followup_contact	=	$form_state['values']['submitted_tree']['the_sections_below_are_optional_but_are_quick_to_complete_and_very_appreciated']['your_next_ride']['followup_contact'];
@@ -2015,7 +2015,7 @@ function sacredride_helper_translated_menu_link_alter(&$item, $map)
 		 
 		 /*MAILING CONTENT*/
 		 //$EmailTo		=	"sandip@signitysolutions.com";
-		 $EmailTo		=	"ride@sacredrides.com";
+		 $EmailTo		=	"ride@hooks.com";
 		 $EmailSubject	=	"Getaways Rider interested in longer Rides" ;
 		 $EmailBody		=	"<p>The following Getaways Rider has expressed interest in our longer Rides and would 	like you to follow up with him/her.</p> <p>&nbsp;</p>
 		 <p><b>First Name:</b> ".$GetRecord['first_name']."</p>
@@ -2049,7 +2049,7 @@ function sacredride_helper_translated_menu_link_alter(&$item, $map)
 		 $messages = array(
 			'id' => $message['module'],
 			'from' =>'',
-			'to' =>'sandip@signitysolutions.com',
+			'to' =>'mail',
 			'subject' => $EmailSubject,
 			'body' =>$EmailBody,
 			'headers' => array(

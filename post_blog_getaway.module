@@ -67,7 +67,7 @@ function post_blog_getaway_content()
 			),
 		);
 		
-		$url	= 'https://getaways.sacredrides.com/dynamic/blog';
+		$url	= 'https://'.$host.'/dynamic/blog';
 		$result = drupal_http_request($url, $options);	
 		drupal_set_message(t('Blog Has been posted on getaway successfuly.'));
 		drupal_goto('all_blogs');	
